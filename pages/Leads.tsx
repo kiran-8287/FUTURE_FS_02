@@ -5,17 +5,21 @@ import { LeadTable } from '../components/Leads/LeadTable';
 import { LeadModal } from '../components/Leads/LeadModal';
 import { AddLeadModal } from '../components/Leads/AddLeadModal';
 import { Button } from '../components/ui/Button';
-import { Plus, Filter, Download, ChevronLeft, ChevronRight, X, Search, ChevronDown, Layers } from 'lucide-react';
+import { Plus, Filter, Download, Upload, ChevronLeft, ChevronRight, X, Search, ChevronDown, Layers } from 'lucide-react';
 import { Lead, LeadStatus, LeadSource } from '../types';
 import { useSearchParams } from 'react-router-dom';
 import { KanbanBoard } from '../components/Leads/KanbanBoard';
 import { LayoutGrid, List as ListIcon } from 'lucide-react';
+import { FilterBuilder, FilterRule } from '../components/Leads/FilterBuilder';
+import { SavedViews } from '../components/Leads/SavedViews';
+import { ImportLeadsModal } from '../components/Leads/ImportLeadsModal';
 
 export const Leads: React.FC = () => {
-  const { leads, updateLeadStatus } = useLeads();
+  const { leads, updateLeadStatus, deleteLead, addLead } = useLeads();
   const { addToast } = useToast();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   // Pagination State
@@ -23,14 +27,26 @@ export const Leads: React.FC = () => {
   const itemsPerPage = 10;
 
   // Filter States
-  const [statusFilter, setStatusFilter] = useState<string>('All');
-  const [sourceFilter, setSourceFilter] = useState<string>('All');
+  // const [statusFilter, setStatusFilter] = useState<string>('All');
+  const [searchParams, setSearchParams] = useSearchParams();
+  // const [sourceFilter, setSourceFilter] = useState<string>(searchParams.get('source') || 'All');
+  const [filters, setFilters] = useState<FilterRule[]>([]);
+
+  // Initialize filters from URL params if present (legacy support optional)
+  useEffect(() => {
+    const source = searchParams.get('source');
+    if (source && source !== 'All') {
+      if (!filters.some(f => f.field === 'source')) {
+        setFilters(prev => [...prev, { id: 'init-source', field: 'source', operator: 'equals', value: source }]);
+      }
+    }
+  }, [searchParams]);
 
   // View State
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
 
   // Search State
-  const [searchParams, setSearchParams] = useSearchParams();
+  // Search State
   const queryFromUrl = searchParams.get('q') || '';
   const [searchQuery, setSearchQuery] = useState(queryFromUrl);
 
@@ -61,9 +77,10 @@ export const Leads: React.FC = () => {
   }, [searchQuery, setSearchParams]);
 
   // Reset pagination when filters change
+  // Reset pagination when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [statusFilter, sourceFilter, searchQuery]);
+  }, [filters, searchQuery]);
 
   const handleLeadClick = (lead: Lead) => {
     setSelectedLead(lead);
@@ -123,16 +140,36 @@ export const Leads: React.FC = () => {
 
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
-      const matchesStatus = statusFilter === 'All' || lead.status === statusFilter;
-      const matchesSource = sourceFilter === 'All' || lead.source === sourceFilter;
+      // Search Filter
       const matchesSearch =
         lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.company.toLowerCase().includes(searchQuery.toLowerCase());
 
-      return matchesStatus && matchesSource && matchesSearch;
+      if (!matchesSearch) return false;
+
+      // Advanced Filters
+      if (filters.length === 0) return true;
+
+      return filters.every(filter => {
+        const itemValue = (lead as any)[filter.field]; // Simple access, might need refinement for nested/types
+
+        if (filter.operator === 'equals') {
+          return String(itemValue).toLowerCase() === String(filter.value).toLowerCase();
+        }
+        if (filter.operator === 'contains') {
+          return String(itemValue).toLowerCase().includes(String(filter.value).toLowerCase());
+        }
+        if (filter.operator === 'gt') {
+          return Number(itemValue) > Number(filter.value);
+        }
+        if (filter.operator === 'lt') {
+          return Number(itemValue) < Number(filter.value);
+        }
+        return true;
+      });
     });
-  }, [leads, statusFilter, sourceFilter, searchQuery]);
+  }, [leads, filters, searchQuery]);
 
   // Pagination Logic
   const totalPages = Math.max(1, Math.ceil(filteredLeads.length / itemsPerPage));
@@ -140,8 +177,66 @@ export const Leads: React.FC = () => {
   const paginatedLeads = filteredLeads.slice(startIndex, startIndex + itemsPerPage);
   const endIndex = Math.min(startIndex + itemsPerPage, filteredLeads.length);
 
+
+  // Bulk Selection State
+  const [selectedLeadIds, setSelectedLeadIds] = useState<Set<string>>(new Set());
+
+  const handleToggleSelect = (id: string) => {
+    const newSelected = new Set(selectedLeadIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedLeadIds(newSelected);
+  };
+
+  const handleToggleAll = (checked: boolean) => {
+    if (checked) {
+      const allIds = filteredLeads.map(l => l.id);
+      setSelectedLeadIds(new Set(allIds));
+    } else {
+      setSelectedLeadIds(new Set());
+    }
+  };
+
+  const handleBulkStatusUpdate = (status: LeadStatus) => {
+    selectedLeadIds.forEach(id => updateLeadStatus(id, status));
+    addToast(`Updated ${selectedLeadIds.size} leads to ${status}`);
+    setSelectedLeadIds(new Set());
+  };
+
+  const handleBulkDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedLeadIds.size} leads?`)) {
+      const deletedLeadIds = Array.from(selectedLeadIds);
+      const deletedLeads = leads.filter(l => deletedLeadIds.includes(l.id));
+
+      // Delete the leads
+      const deletePromises = deletedLeadIds.map(id => deleteLead(id));
+      await Promise.all(deletePromises);
+
+      // Show toast with undo action
+      addToast(
+        `Deleted ${deletedLeadIds.length} lead${deletedLeadIds.length > 1 ? 's' : ''}`,
+        'success',
+        {
+          label: 'Undo',
+          callback: () => {
+            // Restore deleted leads
+            deletedLeads.forEach(lead => {
+              addLead(lead);
+            });
+            addToast('Leads restored', 'info');
+          }
+        }
+      );
+
+      setSelectedLeadIds(new Set());
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       {/* Header & Actions */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -149,6 +244,7 @@ export const Leads: React.FC = () => {
           <p className="text-sm text-gray-500">Manage and track your potential clients.</p>
         </div>
         <div className="flex gap-2">
+          {/* ... existing buttons ... */}
           <div className="flex bg-white p-1 rounded-lg mr-2 border border-gray-200">
             <button
               onClick={() => setViewMode('list')}
@@ -165,6 +261,10 @@ export const Leads: React.FC = () => {
               <LayoutGrid size={18} />
             </button>
           </div>
+          <Button variant="secondary" size="md" onClick={() => setIsImportModalOpen(true)} className="mr-2">
+            <Upload size={16} className="mr-2" />
+            Import
+          </Button>
           <Button variant="secondary" size="md" onClick={handleExport}>
             <Download size={16} className="mr-2" />
             Export
@@ -176,9 +276,40 @@ export const Leads: React.FC = () => {
         </div>
       </div>
 
-      {/* Filters & Search Bar */}
-      <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
+      {/* Bulk Action Bar */}
+      {selectedLeadIds.size > 0 && (
+        <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between bg-blue-600 text-white p-4 rounded-lg shadow-lg animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center space-x-4">
+            <span className="font-semibold">{selectedLeadIds.size} Selected</span>
+            <div className="h-4 w-px bg-blue-400"></div>
+            <button onClick={() => setSelectedLeadIds(new Set())} className="text-sm hover:text-blue-100">
+              Cancel
+            </button>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleBulkDelete}
+              className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-xs font-medium transition-colors border border-red-500 mr-2"
+            >
+              Delete
+            </button>
+            <span className="text-sm mr-2 pl-2 border-l border-blue-500">Mark as:</span>
+            {Object.values(LeadStatus).map(status => (
+              <button
+                key={status}
+                onClick={() => handleBulkStatusUpdate(status)}
+                className="px-3 py-1 bg-blue-700 hover:bg-blue-500 rounded text-xs font-medium transition-colors border border-blue-500"
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
+      {/* Filters & Search Bar */}
+      {/* ... (keep existing) ... */}
+      <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
         {/* Search */}
         <div className="relative w-full lg:max-w-md group">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -203,50 +334,23 @@ export const Leads: React.FC = () => {
         </div>
 
         {/* Filters */}
+        {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-
-          {/* Status Filter */}
-          <div className="relative w-full sm:w-48 group">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Filter size={16} className="text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-            </div>
-            <select
-              className="block w-full pl-10 pr-10 py-2.5 text-base border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm rounded-lg bg-white hover:bg-white focus:bg-white transition-all appearance-none cursor-pointer text-gray-700 font-medium"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="All">All Status</option>
-              {Object.values(LeadStatus).map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
-              <ChevronDown size={16} />
-            </div>
-          </div>
-
-          {/* Source Filter */}
-          <div className="relative w-full sm:w-48 group">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Layers size={16} className="text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-            </div>
-            <select
-              className="block w-full pl-10 pr-10 py-2.5 text-base border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm rounded-lg bg-gray-50 hover:bg-white focus:bg-white transition-all appearance-none cursor-pointer text-gray-700 font-medium"
-              value={sourceFilter}
-              onChange={(e) => setSourceFilter(e.target.value)}
-            >
-              <option value="All">All Sources</option>
-              {Object.values(LeadSource).map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
-              <ChevronDown size={16} />
-            </div>
-          </div>
+          <SavedViews currentFilters={filters} onLoadFilters={setFilters} />
+          <FilterBuilder filters={filters} onChange={setFilters} />
         </div>
       </div>
 
       {/* Lead Content */}
       <div className="space-y-4">
         {viewMode === 'list' ? (
-          <LeadTable leads={paginatedLeads} onLeadClick={handleLeadClick} />
+          <LeadTable
+            leads={paginatedLeads}
+            onLeadClick={handleLeadClick}
+            selectedIds={Array.from(selectedLeadIds)}
+            onToggleSelect={handleToggleSelect}
+            onToggleAll={handleToggleAll}
+          />
         ) : (
           <div className="h-[calc(100vh-280px)] overflow-hidden">
             <KanbanBoard
@@ -259,6 +363,7 @@ export const Leads: React.FC = () => {
             />
           </div>
         )}
+
 
         {/* Pagination Controls */}
         {filteredLeads.length > 0 && (
@@ -321,6 +426,7 @@ export const Leads: React.FC = () => {
 
       {/* Modals */}
       <AddLeadModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
+      <ImportLeadsModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} />
 
       <LeadModal
         lead={selectedLead}

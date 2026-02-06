@@ -24,7 +24,7 @@ The `.env` file is already configured with your Supabase credentials.
 node server.js
 ```
 
-The server will run on `http://localhost:5000`
+The server will run on `http://localhost:5001`
 
 ## 📁 Project Structure
 
@@ -265,6 +265,9 @@ Authorization: Bearer <jwt_token>
     "timestamp": "2026-02-01T06:08:04.000Z"
   }
   ```
+  ```bash
+  curl -X GET http://localhost:5001/api/health
+  ```
 
 ## 🔒 Security Features
 
@@ -388,6 +391,6 @@ This project is part of the Lumina CRM system.
 
 ---
 
-**Backend URL:** http://localhost:5000  
+**Backend URL:** http://localhost:5001  
 **Frontend URL:** http://localhost:3000  
 **Database:** Supabase PostgreSQL

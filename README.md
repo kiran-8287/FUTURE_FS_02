@@ -155,7 +155,7 @@ node import-leads.js
 node server.js
 ```
 
-The backend will run on **http://localhost:5000**
+The backend will run on **http://localhost:5001**
 
 ### 4. Frontend Setup
 
@@ -309,7 +309,7 @@ node verify-leads.js
 - Try flushing DNS: `ipconfig /flushdns`
 
 ### Frontend Not Loading Leads
-- Check if backend server is running on port 5000
+- Check if backend server is running on port 5001
 - Verify you're logged in (check localStorage for token)
 - Open browser console for error messages
 - Check network tab for failed API calls

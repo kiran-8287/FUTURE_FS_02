@@ -92,7 +92,7 @@ node import-leads.js
 ## ✅ You're Done!
 
 Your CRM is now running with:
-- ✅ Backend API on http://localhost:5000
+- ✅ Backend API on http://localhost:5001
 - ✅ Frontend on http://localhost:3000
 - ✅ Database connected to Supabase
 - ✅ Sample data loaded (if imported)
@@ -111,7 +111,7 @@ Your CRM is now running with:
 - Check Supabase credentials in `.env`
 
 **Frontend not loading leads?**
-- Make sure backend is running on port 5000
+- Make sure backend is running on port 5001
 - Check browser console for errors
 - Verify you're logged in
 

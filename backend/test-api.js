@@ -1,5 +1,5 @@
 // API Test Script
-const baseURL = 'http://localhost:5000';
+const baseURL = 'http://localhost:5001';
 
 async function testAPI() {
     console.log('🧪 Testing Lumina CRM API...\n');

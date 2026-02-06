@@ -12,6 +12,7 @@ import { Analytics } from './pages/Analytics';
 import { Settings } from './pages/Settings';
 import { Communications } from './pages/Communications';
 import { Layout } from './components/Layout/Layout';
+import { CommandPalette } from './components/CommandPalette/CommandPalette';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
@@ -28,6 +29,7 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 const AppContent = () => {
   return (
     <Router>
+      <CommandPalette />
       <Routes>
         <Route path="/login" element={<Login />} />
 

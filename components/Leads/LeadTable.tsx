@@ -7,9 +7,21 @@ import { format } from 'date-fns';
 interface LeadTableProps {
   leads: Lead[];
   onLeadClick: (lead: Lead) => void;
+  selectedIds: string[];
+  onToggleSelect: (id: string) => void;
+  onToggleAll: (checked: boolean) => void;
 }
 
-export const LeadTable: React.FC<LeadTableProps> = ({ leads, onLeadClick }) => {
+export const LeadTable: React.FC<LeadTableProps> = ({
+  leads,
+  onLeadClick,
+  selectedIds,
+  onToggleSelect,
+  onToggleAll
+}) => {
+  const allSelected = leads.length > 0 && leads.every(l => selectedIds.includes(l.id));
+  const someSelected = selectedIds.length > 0 && !allSelected;
+
   if (leads.length === 0) {
     return (
       <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
@@ -28,6 +40,15 @@ export const LeadTable: React.FC<LeadTableProps> = ({ leads, onLeadClick }) => {
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-white dark:bg-gray-900/50">
             <tr>
+              <th scope="col" className="px-6 py-3 text-left">
+                <input
+                  type="checkbox"
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                  checked={allSelected}
+                  ref={input => { if (input) input.indeterminate = someSelected; }}
+                  onChange={(e) => onToggleAll(e.target.checked)}
+                />
+              </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Name / Company
               </th>
@@ -36,6 +57,9 @@ export const LeadTable: React.FC<LeadTableProps> = ({ leads, onLeadClick }) => {
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
                 Source
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Value
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Status
@@ -49,56 +73,71 @@ export const LeadTable: React.FC<LeadTableProps> = ({ leads, onLeadClick }) => {
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {leads.map((lead) => (
-              <tr
-                key={lead.id}
-                className="hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer group"
-                onClick={() => onLeadClick(lead)}
-              >
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm">
-                      {lead.name.charAt(0)}
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                        {lead.name}
+            {leads.map((lead) => {
+              const isSelected = selectedIds.includes(lead.id);
+              return (
+                <tr
+                  key={lead.id}
+                  className={`hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer group ${isSelected ? 'bg-blue-50 dark:bg-blue-900/30' : ''
+                    }`}
+                  onClick={() => onLeadClick(lead)}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                      checked={isSelected}
+                      onChange={() => onToggleSelect(lead.id)}
+                    />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm">
+                        {lead.name.charAt(0)}
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">{lead.company}</div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                          {lead.name}
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{lead.company}</div>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      <Mail size={14} className="mr-2 text-gray-400" />
-                      {lead.email}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                        <Mail size={14} className="mr-2 text-gray-400" />
+                        {lead.email}
+                      </div>
+                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                        <Phone size={14} className="mr-2 text-gray-400" />
+                        {lead.phone}
+                      </div>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      <Phone size={14} className="mr-2 text-gray-400" />
-                      {lead.phone}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">{lead.source}</span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 font-medium">
+                    {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(lead.value || 0)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Badge status={lead.status} />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hidden lg:table-cell">
+                    <div className="flex items-center">
+                      <Calendar size={14} className="mr-2 text-gray-400" />
+                      {format(new Date(lead.dateAdded), 'MMM d, yyyy')}
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">{lead.source}</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Badge status={lead.status} />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hidden lg:table-cell">
-                  <div className="flex items-center">
-                    <Calendar size={14} className="mr-2 text-gray-400" />
-                    {format(new Date(lead.dateAdded), 'MMM d, yyyy')}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    <MoreHorizontal size={20} />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                      <MoreHorizontal size={20} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

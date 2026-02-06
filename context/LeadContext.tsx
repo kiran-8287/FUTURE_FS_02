@@ -4,7 +4,7 @@ import { useToast } from './ToastContext';
 import { useNotifications } from './NotificationContext';
 import { useAuth } from './AuthContext';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:5001/api';
 
 interface LeadContextType {
   leads: Lead[];
@@ -14,7 +14,7 @@ interface LeadContextType {
   updateLead: (id: string, updates: Partial<Lead>) => Promise<void>;
   deleteLead: (id: string) => Promise<void>;
   addNote: (leadId: string, noteText: string) => Promise<void>;
-  getLeadStats: () => { total: number; new: number; contacted: number; converted: number; lost: number; value: number };
+  getLeadStats: (leadsToProcess?: Lead[]) => { total: number; new: number; contacted: number; converted: number; lost: number; value: number };
   refreshLeads: () => Promise<void>;
 }
 
@@ -50,9 +50,9 @@ export const LeadProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         company: lead.company || '',
         title: '', // Backend doesn't have title field
         source: lead.source || 'Website',
-        status: lead.status || 'new',
+        status: (lead.status ? lead.status.charAt(0).toUpperCase() + lead.status.slice(1) : 'New') as LeadStatus,
         message: lead.message || '',
-        value: 0, // Backend doesn't have value field
+        value: Number(lead.value) || 0, // Read value from backend
         dateAdded: lead.created_at,
         lastInteraction: lead.created_at,
         notes: [] // Notes are fetched separately
@@ -279,14 +279,15 @@ export const LeadProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // Get lead statistics
-  const getLeadStats = () => {
+  const getLeadStats = (leadsToProcess?: Lead[]) => {
+    const targetLeads = leadsToProcess || leads;
     return {
-      total: leads.length,
-      new: leads.filter((l) => l.status === LeadStatus.New).length,
-      contacted: leads.filter((l) => l.status === LeadStatus.Contacted).length,
-      converted: leads.filter((l) => l.status === LeadStatus.Converted).length,
-      lost: leads.filter((l) => l.status === LeadStatus.Lost).length,
-      value: leads.reduce((acc, curr) => acc + (curr.value || 0), 0)
+      total: targetLeads.length,
+      new: targetLeads.filter((l) => l.status === LeadStatus.New).length,
+      contacted: targetLeads.filter((l) => l.status === LeadStatus.Contacted).length,
+      converted: targetLeads.filter((l) => l.status === LeadStatus.Converted).length,
+      lost: targetLeads.filter((l) => l.status === LeadStatus.Lost).length,
+      value: targetLeads.reduce((acc, curr) => acc + (curr.value || 0), 0)
     };
   };
 

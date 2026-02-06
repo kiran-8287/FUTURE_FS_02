@@ -64,7 +64,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
     console.log(`🚀 Lumina CRM Backend server is running on http://localhost:${PORT}`);
     console.log(`📊 Health check available at http://localhost:${PORT}/api/health`);

@@ -1,5 +1,51 @@
-// Lead management controller
 const pool = require('../config/database');
+
+const MOCK_LEADS = [
+    {
+        id: "1",
+        name: 'Aarav Patel',
+        email: 'aarav.p@techflow.in',
+        phone: '+91 98765 43210',
+        company: 'TechFlow Solutions',
+        source: 'Website',
+        status: 'new',
+        message: 'Interested in your enterprise security protocols.',
+        created_at: new Date().toISOString()
+    },
+    {
+        id: "2",
+        name: 'Vihaan Kumar',
+        email: 'vihaan.k@innovate.co.in',
+        phone: '+91 98989 89898',
+        company: 'Innovate Corp',
+        source: 'Referral',
+        status: 'contacted',
+        message: 'Looking for a comprehensive CRM solution.',
+        created_at: new Date().toISOString()
+    },
+    {
+        id: "3",
+        name: 'Ananya Sharma',
+        email: 'ananya@solarsystems.com',
+        phone: '+91 99887 76655',
+        company: 'Solar Systems Ltd',
+        source: 'LinkedIn',
+        status: 'converted',
+        message: 'Urgent consultation needed regarding workflow automation.',
+        created_at: new Date().toISOString()
+    },
+    {
+        id: "4",
+        name: 'Rohan Gupta',
+        email: 'rohan@futuretech.com',
+        phone: '+91 91234 56789',
+        company: 'Future Tech',
+        source: 'Social Media',
+        status: 'new',
+        message: 'I want to upgrade my existing ERP integration.',
+        created_at: new Date().toISOString()
+    }
+];
 
 /**
  * Get all leads from the database
@@ -11,11 +57,24 @@ const getAllLeads = async (req, res) => {
             'SELECT * FROM leads ORDER BY created_at DESC'
         );
 
+        // If no leads found and mock login is allowed, return mock leads
+        if (result.rows.length === 0 && process.env.ALLOW_MOCK_LOGIN === 'true') {
+            console.log('⚠️ No leads in DB, returning MOCK LEADS');
+            return res.status(200).json(MOCK_LEADS);
+        }
+
         res.status(200).json(result.rows);
         console.log(`✅ Retrieved ${result.rows.length} leads`);
 
     } catch (error) {
         console.error('❌ Error fetching leads:', error);
+
+        // If query fails (connection error) and mock login is allowed, return mock leads
+        if (process.env.ALLOW_MOCK_LOGIN === 'true') {
+            console.log('⚠️ Database connection failed, returning MOCK LEADS');
+            return res.status(200).json(MOCK_LEADS);
+        }
+
         res.status(500).json({
             error: 'Failed to fetch leads.'
         });
@@ -69,10 +128,10 @@ const createLead = async (req, res) => {
 
         // Insert new lead into database
         const result = await pool.query(
-            `INSERT INTO leads (name, email, phone, company, source, message, status, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, 'new', NOW())
+            `INSERT INTO leads (name, email, phone, company, source, message, status, value, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, 'new', $7, NOW())
        RETURNING *`,
-            [name, email, phone || null, company || null, source || 'Website', message || null]
+            [name, email, phone || null, company || null, source || 'Website', message || null, req.body.value || 0]
         );
 
         res.status(201).json(result.rows[0]);
@@ -261,6 +320,17 @@ const getAnalytics = async (req, res) => {
         const totalResult = await pool.query('SELECT COUNT(*) FROM leads');
         const total = parseInt(totalResult.rows[0].count);
 
+        if (total === 0 && process.env.ALLOW_MOCK_LOGIN === 'true') {
+            console.log('⚠️ No leads in DB, returning MOCK ANALYTICS');
+            return res.status(200).json({
+                total: MOCK_LEADS.length,
+                new: MOCK_LEADS.filter(l => l.status === 'new').length,
+                contacted: MOCK_LEADS.filter(l => l.status === 'contacted').length,
+                converted: MOCK_LEADS.filter(l => l.status === 'converted').length,
+                conversionRate: ((MOCK_LEADS.filter(l => l.status === 'converted').length / MOCK_LEADS.length) * 100).toFixed(2)
+            });
+        }
+
         // Get counts by status
         const newResult = await pool.query("SELECT COUNT(*) FROM leads WHERE status = 'new'");
         const contactedResult = await pool.query("SELECT COUNT(*) FROM leads WHERE status = 'contacted'");
@@ -286,6 +356,18 @@ const getAnalytics = async (req, res) => {
 
     } catch (error) {
         console.error('❌ Error fetching analytics:', error);
+
+        if (process.env.ALLOW_MOCK_LOGIN === 'true') {
+            console.log('⚠️ Database connection failed, returning MOCK ANALYTICS');
+            return res.status(200).json({
+                total: MOCK_LEADS.length,
+                new: MOCK_LEADS.filter(l => l.status === 'new').length,
+                contacted: MOCK_LEADS.filter(l => l.status === 'contacted').length,
+                converted: MOCK_LEADS.filter(l => l.status === 'converted').length,
+                conversionRate: ((MOCK_LEADS.filter(l => l.status === 'converted').length / MOCK_LEADS.length) * 100).toFixed(2)
+            });
+        }
+
         res.status(500).json({
             error: 'Failed to fetch analytics.'
         });

@@ -10,11 +10,27 @@ const jwt = require('jsonwebtoken');
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log('🔍 Login attempt for:', email);
 
         // Validate input
         if (!email || !password) {
             return res.status(400).json({
                 error: 'Email and password are required.'
+            });
+        }
+
+        // Mock Login Fallback (for development)
+        if (process.env.ALLOW_MOCK_LOGIN === 'true' && email === 'admin@lumina.com' && password === 'password') {
+            console.log('⚠️ Using MOCK LOGIN (Database connection bypassed)');
+            const token = jwt.sign(
+                { id: 0, email: 'admin@lumina.com' },
+                process.env.JWT_SECRET || 'fallback_secret',
+                { expiresIn: '24h' }
+            );
+            return res.status(200).json({
+                message: 'Login successful (MOCK)',
+                token,
+                user: { id: 0, email: 'admin@lumina.com' }
             });
         }
 
@@ -76,8 +92,18 @@ const login = async (req, res) => {
 
     } catch (error) {
         console.error('❌ Login error:', error);
+
+        // Check for common database connection errors
+        if (error.code === 'ENOTFOUND' || error.message.includes('getaddrinfo')) {
+            return res.status(503).json({
+                error: 'Database connection failed. Please check if your Supabase host is correct or enable ALLOW_MOCK_LOGIN in server settings.'
+            });
+        }
+
         res.status(500).json({
-            error: 'Internal server error during login.'
+            error: 'Internal server error during login.',
+            message: error.message,
+            stack: error.stack
         });
     }
 };
