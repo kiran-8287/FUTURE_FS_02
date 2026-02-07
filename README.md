@@ -115,9 +115,9 @@ CREATE TABLE admin_users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Insert admin user (password: "password")
+-- Insert admin user (Password: LuminaCrm@Admin2026!)
 INSERT INTO admin_users (email, password) 
-VALUES ('admin@lumina.com', 'LuminaCrm@Admin2026!');
+VALUES ('admin@lumina.com', '$2b$10$xyDg7wsWdlLmlXFvUz7ftukE.aPeeELvwFyyHSc1Q.Ao/e91BKzyea');
 ```
 
 ### 3. Backend Setup

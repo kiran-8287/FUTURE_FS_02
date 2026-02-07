@@ -82,7 +82,7 @@ PORT=5000
 ### Table: admin_users
 - `id` (int8, primary key, auto increment)
 - `email` (varchar) → admin@lumina.com
-- `password` (varchar) → password
+- `password` (varchar) → Bcrypt hashed password
 - `created_at` (timestamptz)
 
 ## 🛣️ API Endpoints
@@ -95,7 +95,7 @@ PORT=5000
   Request:
   {
     "email": "admin@lumina.com",
-    "password": "password"
+    "password": "LuminaCrm@Admin2026!"
   }
   
   Response:
@@ -272,7 +272,7 @@ Authorization: Bearer <jwt_token>
 ## 🔒 Security Features
 
 - **JWT Authentication**: Secure token-based authentication for protected routes
-- **Password Support**: Supports both plain text and bcrypt hashed passwords
+- **Password Security**: Uses bcrypt for secure one-way password hashing (no plain-text storage)
 - **SQL Injection Prevention**: All queries use parameterized statements
 - **CORS Enabled**: Cross-origin requests allowed for frontend integration
 - **Environment Variables**: Sensitive data stored in `.env` file
@@ -331,7 +331,7 @@ Error response format:
 ## 📝 Admin Credentials
 
 **Email:** admin@lumina.com  
-**Password:** LuminaCrm@Admin2026!
+**Password:** LuminaCrm@Admin2026! (Stored as bcrypt hash in DB)
 
 ## 🔄 Integration with Frontend
 

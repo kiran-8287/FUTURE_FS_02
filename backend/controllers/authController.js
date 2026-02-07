@@ -49,17 +49,8 @@ const login = async (req, res) => {
 
         const user = result.rows[0];
 
-        // Compare password - support both plain text and bcrypt hashed passwords
-        let isPasswordValid = false;
-
-        // Check if password is hashed (bcrypt hashes start with $2a$, $2b$, or $2y$)
-        if (user.password.startsWith('$2')) {
-            // Compare with bcrypt
-            isPasswordValid = await bcrypt.compare(password, user.password);
-        } else {
-            // Compare plain text password
-            isPasswordValid = (password === user.password);
-        }
+        // Compare password - Strictly use bcrypt hashed passwords
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
         // If password is invalid, return error
         if (!isPasswordValid) {
