@@ -117,7 +117,7 @@ CREATE TABLE admin_users (
 
 -- Insert admin user (password: "password")
 INSERT INTO admin_users (email, password) 
-VALUES ('admin@lumina.com', 'password');
+VALUES ('admin@lumina.com', 'LuminaCrm@Admin2026!');
 ```
 
 ### 3. Backend Setup
@@ -178,7 +178,7 @@ Open your browser and navigate to **http://localhost:3000**
 
 **Default Admin Credentials:**
 - Email: `admin@lumina.com`
-- Password: `password`
+- Password: `LuminaCrm@Admin2026!`
 
 ## 📁 Project Structure
 

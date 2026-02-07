@@ -134,7 +134,9 @@ const createLead = async (req, res) => {
             [name, email, phone || null, company || null, source || 'Website', message || null, req.body.value || 0]
         );
 
-        res.status(201).json(result.rows[0]);
+        const newLead = result.rows[0];
+
+        res.status(201).json(newLead);
         console.log(`✅ New lead created: ${name} (${email})`);
 
     } catch (error) {
@@ -154,26 +156,22 @@ const updateLeadStatus = async (req, res) => {
         const { id } = req.params;
         const { status } = req.body;
 
+        // Normalize status to lowercase
+        const normalizedStatus = status ? status.toLowerCase() : null;
+
         // Validate status value
-        const validStatuses = ['new', 'contacted', 'converted'];
-        if (!status || !validStatuses.includes(status)) {
+        const validStatuses = ['new', 'contacted', 'converted', 'lost'];
+        if (!normalizedStatus || !validStatuses.includes(normalizedStatus)) {
             return res.status(400).json({
-                error: 'Invalid status. Must be one of: new, contacted, converted.'
+                error: 'Invalid status. Must be one of: new, contacted, converted, lost.'
             });
         }
 
         // Update lead status
         const result = await pool.query(
             'UPDATE leads SET status = $1 WHERE id = $2 RETURNING *',
-            [status, id]
+            [normalizedStatus, id]
         );
-
-        // Check if lead exists
-        if (result.rows.length === 0) {
-            return res.status(404).json({
-                error: 'Lead not found.'
-            });
-        }
 
         res.status(200).json(result.rows[0]);
         console.log(`✅ Updated lead ${id} status to: ${status}`);
@@ -209,14 +207,15 @@ const updateLead = async (req, res) => {
             [name, email, phone, company, source, message, id]
         );
 
-        // Check if lead exists
         if (result.rows.length === 0) {
             return res.status(404).json({
                 error: 'Lead not found.'
             });
         }
 
-        res.status(200).json(result.rows[0]);
+        const updatedLead = result.rows[0];
+
+        res.status(200).json(updatedLead);
         console.log(`✅ Updated lead with ID: ${id}`);
 
     } catch (error) {
@@ -239,16 +238,17 @@ const deleteLead = async (req, res) => {
             [id]
         );
 
-        // Check if lead exists
         if (result.rows.length === 0) {
             return res.status(404).json({
                 error: 'Lead not found.'
             });
         }
 
+        const deletedLead = result.rows[0];
+
         res.status(200).json({
             message: 'Lead deleted successfully.',
-            deletedLead: result.rows[0]
+            deletedLead
         });
         console.log(`✅ Deleted lead with ID: ${id}`);
 

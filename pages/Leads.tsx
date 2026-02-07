@@ -240,22 +240,22 @@ export const Leads: React.FC = () => {
       {/* Header & Actions */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Leads</h1>
-          <p className="text-sm text-gray-500">Manage and track your potential clients.</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Leads</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Manage and track your potential clients.</p>
         </div>
         <div className="flex gap-2">
           {/* ... existing buttons ... */}
-          <div className="flex bg-white p-1 rounded-lg mr-2 border border-gray-200">
+          <div className="flex bg-white dark:bg-gray-800 p-1 rounded-lg mr-2 border border-gray-200 dark:border-gray-700">
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-white dark:bg-gray-700 shadow text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
               title="List View"
             >
               <ListIcon size={18} />
             </button>
             <button
               onClick={() => setViewMode('kanban')}
-              className={`p-1.5 rounded-md transition-all ${viewMode === 'kanban' ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`p-1.5 rounded-md transition-all ${viewMode === 'kanban' ? 'bg-white dark:bg-gray-700 shadow text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
               title="Kanban View"
             >
               <LayoutGrid size={18} />
@@ -309,7 +309,7 @@ export const Leads: React.FC = () => {
 
       {/* Filters & Search Bar */}
       {/* ... (keep existing) ... */}
-      <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
+      <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
         {/* Search */}
         <div className="relative w-full lg:max-w-md group">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -320,7 +320,7 @@ export const Leads: React.FC = () => {
             placeholder="Search leads by name, email, or company..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-lg leading-5 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 sm:text-sm"
+            className="block w-full pl-10 pr-10 py-2.5 border border-gray-200 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:bg-white dark:focus:bg-gray-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 sm:text-sm"
           />
           {searchQuery && (
             <button
@@ -356,8 +356,6 @@ export const Leads: React.FC = () => {
             <KanbanBoard
               leads={filteredLeads}
               onStatusChange={(id, status) => {
-                // Optimistic UI update could happen here, but context handles it
-                const { updateLeadStatus } = useLeads(); // Accessing context inside render is fine, but cleaner to lift useLeads
                 updateLeadStatus(id, status);
               }}
             />
@@ -367,10 +365,10 @@ export const Leads: React.FC = () => {
 
         {/* Pagination Controls */}
         {filteredLeads.length > 0 && (
-          <div className="flex items-center justify-between bg-white px-4 py-3 rounded-lg border border-gray-200 shadow-sm sm:px-6">
+          <div className="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm sm:px-6">
             <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
                   Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{endIndex}</span> of{' '}
                   <span className="font-medium">{filteredLeads.length}</span> results
                 </p>
@@ -380,18 +378,18 @@ export const Leads: React.FC = () => {
                   <button
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${currentPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:bg-blue-50'}`}
+                    className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium ${currentPage === 1 ? 'text-gray-300 dark:text-gray-500 cursor-not-allowed' : 'text-gray-500 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-600'}`}
                   >
                     <span className="sr-only">Previous</span>
                     <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                   </button>
-                  <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                  <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300">
                     Page {currentPage} of {totalPages}
                   </span>
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
-                    className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${currentPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50'}`}
+                    className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium ${currentPage === totalPages ? 'text-gray-300 dark:text-gray-500 cursor-not-allowed' : 'text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'}`}
                   >
                     <span className="sr-only">Next</span>
                     <ChevronRight className="h-5 w-5" aria-hidden="true" />

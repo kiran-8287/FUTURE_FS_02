@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
+import { formatIndianCurrency } from '../utils/formatCurrency';
 import { useNavigate } from 'react-router-dom';
 import { useLeads } from '../context/LeadContext';
-import { Users, UserCheck, IndianRupee, Activity, Calendar } from 'lucide-react';
+import { Users, UserCheck, IndianRupee, Activity, Calendar, X } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { CalendarWidget } from '../components/CalendarWidget';
 import { SkeletonCard, SkeletonChart, SkeletonList } from '../components/ui/Skeleton';
@@ -129,8 +130,16 @@ export const Dashboard: React.FC = () => {
       trend: trends.converted
     },
     {
+      name: 'Lost Leads',
+      value: stats.lost,
+      icon: X,
+      color: 'text-gray-600',
+      bg: 'bg-gray-100',
+      trend: null
+    },
+    {
       name: 'Pipeline Value',
-      value: `₹${stats.value.toLocaleString()}`,
+      value: formatIndianCurrency(stats.value),
       icon: IndianRupee,
       color: 'text-amber-600',
       bg: 'bg-amber-100',
@@ -153,16 +162,16 @@ export const Dashboard: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <span className="text-sm text-gray-500">Overview of your sales pipeline</span>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+          <span className="text-sm text-gray-500 dark:text-gray-400">Overview of your sales pipeline</span>
         </div>
 
-        <div className="flex items-center space-x-2 bg-white rounded-md shadow-sm border border-gray-300 px-3 py-2">
-          <Calendar className="h-4 w-4 text-gray-500" />
+        <div className="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded-md shadow-sm border border-gray-300 dark:border-gray-700 px-3 py-2">
+          <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-400" />
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            className="text-sm text-gray-700 border-none focus:ring-0 p-0 pr-8 bg-transparent cursor-pointer"
+            className="text-sm text-gray-700 dark:text-gray-300 border-none focus:ring-0 p-0 pr-8 bg-transparent cursor-pointer dark:[&>option]:bg-gray-800 dark:[&>option]:text-white"
           >
             <option value="all">All Time</option>
             <option value="7days">Last 7 Days</option>
@@ -173,19 +182,19 @@ export const Dashboard: React.FC = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
         {cards.map((card) => (
-          <div key={card.name} className="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
+          <div key={card.name} className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="p-5">
               <div className="flex items-center">
-                <div className={`flex-shrink-0 rounded-md p-3 ${card.bg}`}>
+                <div className={`flex-shrink-0 rounded-md p-3 ${card.bg} dark:bg-opacity-20`}>
                   <card.icon className={`h-6 w-6 ${card.color}`} />
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">{card.name}</dt>
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{card.name}</dt>
                     <dd className="flex items-baseline">
-                      <div className="text-2xl font-bold text-gray-900">{card.value}</div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">{card.value}</div>
                       {card.trend !== null && (
                         <div className={`ml-2 flex items-baseline text-sm font-semibold ${card.trend >= 0 ? 'text-green-600' : 'text-red-600'
                           }`}>
@@ -209,14 +218,14 @@ export const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent/Stalled Activity - Spans 1 column */}
-        <div className="col-span-1 bg-white shadow-sm rounded-lg border border-gray-200 p-6 lg:col-span-1">
-          <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
+        <div className="col-span-1 bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-6 lg:col-span-1">
+          <div className="flex items-center justify-between mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">
             <div className="flex space-x-4">
               <button
                 onClick={() => setActiveTab('recent')}
                 className={`text-sm font-medium pb-2 -mb-2.5 transition-colors ${activeTab === 'recent'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                   }`}
               >
                 Recent Leads
@@ -225,7 +234,7 @@ export const Dashboard: React.FC = () => {
                 onClick={() => setActiveTab('stalled')}
                 className={`text-sm font-medium pb-2 -mb-2.5 transition-colors flex items-center ${activeTab === 'stalled'
                   ? 'text-red-600 border-b-2 border-red-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                   }`}
               >
                 Stalled
@@ -239,25 +248,25 @@ export const Dashboard: React.FC = () => {
           </div>
 
           <div className="flow-root">
-            <ul className="-my-5 divide-y divide-gray-200 h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+            <ul className="-my-5 divide-y divide-gray-200 dark:divide-gray-700 h-[300px] overflow-y-auto pr-2 custom-scrollbar">
               {activeTab === 'recent' ? (
                 <>
                   {filteredLeads.slice(0, 5).map((lead) => (
                     <li key={lead.id} className="py-4">
                       <div className="flex items-center space-x-4">
                         <div className="flex-shrink-0">
-                          <span className="inline-block h-8 w-8 rounded-full bg-white border border-gray-200 text-center leading-8 text-xs font-bold text-gray-600">
+                          <span className="inline-block h-8 w-8 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-center leading-8 text-xs font-bold text-gray-600 dark:text-gray-300">
                             {lead.name.charAt(0)}
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <button
                             onClick={() => navigate(`/leads?q=${lead.name}`)}
-                            className="text-sm font-medium text-gray-900 truncate hover:text-blue-600 focus:outline-none text-left"
+                            className="text-sm font-medium text-gray-900 dark:text-white truncate hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none text-left"
                           >
                             {lead.name}
                           </button>
-                          <p className="text-sm text-gray-500 truncate">{lead.company}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{lead.company}</p>
                         </div>
                         <div>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${lead.status === 'New' ? 'bg-blue-100 text-blue-800' :
@@ -271,7 +280,7 @@ export const Dashboard: React.FC = () => {
                     </li>
                   ))}
                   {filteredLeads.length === 0 && (
-                    <li className="py-10 text-center text-sm text-gray-500">
+                    <li className="py-10 text-center text-sm text-gray-500 dark:text-gray-400">
                       No recent leads found
                     </li>
                   )}
@@ -289,7 +298,7 @@ export const Dashboard: React.FC = () => {
                         <div className="flex-1 min-w-0">
                           <button
                             onClick={() => navigate(`/leads?q=${lead.name}`)}
-                            className="text-sm font-medium text-gray-900 truncate hover:text-blue-600 focus:outline-none text-left"
+                            className="text-sm font-medium text-gray-900 dark:text-white truncate hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none text-left"
                           >
                             {lead.name}
                           </button>
@@ -311,8 +320,8 @@ export const Dashboard: React.FC = () => {
                   {stalledLeads.length === 0 && (
                     <li className="py-10 text-center flex flex-col items-center justify-center">
                       <UserCheck className="h-8 w-8 text-green-500 mb-2" />
-                      <p className="text-sm text-gray-900 font-medium">All caught up!</p>
-                      <p className="text-xs text-gray-500">No stalled leads requiring attention.</p>
+                      <p className="text-sm text-gray-900 dark:text-white font-medium">All caught up!</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">No stalled leads requiring attention.</p>
                     </li>
                   )}
                 </>
@@ -324,8 +333,8 @@ export const Dashboard: React.FC = () => {
         {/* Charts & Calendar - Spans 2 columns */}
         <div className="col-span-1 lg:col-span-2 space-y-6">
           {/* Simple Chart */}
-          <div className="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Leads by Source</h3>
+          <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Leads by Source</h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={sourceData}>
@@ -335,6 +344,7 @@ export const Dashboard: React.FC = () => {
                   <Tooltip
                     cursor={{ fill: 'transparent' }}
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    itemStyle={{ color: '#374151' }}
                   />
                   <Bar
                     dataKey="value"

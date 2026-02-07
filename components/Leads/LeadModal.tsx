@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatIndianCurrency } from '../../utils/formatCurrency';
 import { X, Phone, Mail, Building, Calendar, IndianRupee, Send, Trash2, Clock } from 'lucide-react';
 import { Lead, LeadStatus } from '../../types';
 import { useLeads } from '../../context/LeadContext';
@@ -61,7 +62,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ lead: initialLead, isOpen,
               </div>
             </div>
             <div className="flex items-center space-x-3">
-               <select
+              <select
                 value={lead.status}
                 onChange={handleStatusChange}
                 className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
@@ -80,7 +81,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ lead: initialLead, isOpen,
             {/* Left Column: Details */}
             <div className="w-full md:w-1/3 border-r border-gray-200 bg-gray-50 p-6 overflow-y-auto">
               <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Contact Details</h4>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center text-sm">
                   <Mail className="text-gray-400 w-5 h-5 mr-3" />
@@ -94,9 +95,9 @@ export const LeadModal: React.FC<LeadModalProps> = ({ lead: initialLead, isOpen,
                   <Building className="text-gray-400 w-5 h-5 mr-3" />
                   <span className="text-gray-900">{lead.company}</span>
                 </div>
-                 <div className="flex items-center text-sm">
+                <div className="flex items-center text-sm">
                   <IndianRupee className="text-gray-400 w-5 h-5 mr-3" />
-                  <span className="text-gray-900 font-medium">₹{lead.value?.toLocaleString()}</span>
+                  <span className="text-gray-900 dark:text-white font-medium">{formatIndianCurrency(lead.value || 0)}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Calendar className="text-gray-400 w-5 h-5 mr-3" />
@@ -121,8 +122,8 @@ export const LeadModal: React.FC<LeadModalProps> = ({ lead: initialLead, isOpen,
                   <div className="text-center bg-red-50 p-3 rounded-lg border border-red-100">
                     <p className="text-sm text-red-800 mb-2">Are you sure? This cannot be undone.</p>
                     <div className="flex space-x-2 justify-center">
-                       <Button size="sm" variant="danger" onClick={handleDelete}>Confirm</Button>
-                       <Button size="sm" variant="secondary" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
+                      <Button size="sm" variant="danger" onClick={handleDelete}>Confirm</Button>
+                      <Button size="sm" variant="secondary" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
                     </div>
                   </div>
                 )}
@@ -134,39 +135,39 @@ export const LeadModal: React.FC<LeadModalProps> = ({ lead: initialLead, isOpen,
               <div className="p-4 bg-gray-50 border-b border-gray-200">
                 <h4 className="text-sm font-medium text-gray-900">Activity Timeline & Notes</h4>
               </div>
-              
+
               <div className="flex-1 p-6 overflow-y-auto space-y-6">
-                 {/* Notes List */}
-                 {lead.notes.length === 0 ? (
-                   <div className="text-center py-10 text-gray-500 text-sm">
-                     <Clock className="mx-auto h-8 w-8 text-gray-300 mb-2" />
-                     No notes yet. Add one below to track interactions.
-                   </div>
-                 ) : (
-                   lead.notes.map((note) => (
-                     <div key={note.id} className="relative pl-6 pb-2">
-                       {/* Timeline line */}
-                       <div className="absolute top-0 left-0 h-full w-px bg-gray-200 ml-1"></div>
-                       <div className="absolute top-1 left-0 h-2.5 w-2.5 rounded-full bg-blue-400 border-2 border-white ml-[1px]"></div>
-                       
-                       <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                         <div className="flex justify-between items-center mb-1">
-                           <span className="text-xs font-semibold text-gray-700">{note.author}</span>
-                           <span className="text-xs text-gray-400">{format(new Date(note.timestamp), 'MMM d, h:mm a')}</span>
-                         </div>
-                         <p className="text-sm text-gray-600">{note.text}</p>
-                       </div>
-                     </div>
-                   ))
-                 )}
-                 
-                 {/* Lead Created Event */}
-                 <div className="relative pl-6">
-                    <div className="absolute top-1 left-0 h-2.5 w-2.5 rounded-full bg-gray-300 border-2 border-white ml-[1px]"></div>
-                    <div className="text-sm text-gray-500">
-                      Lead created on <span className="font-medium text-gray-700">{format(new Date(lead.dateAdded), 'MMMM d, yyyy')}</span> from <span className="font-medium">{lead.source}</span>
+                {/* Notes List */}
+                {lead.notes.length === 0 ? (
+                  <div className="text-center py-10 text-gray-500 text-sm">
+                    <Clock className="mx-auto h-8 w-8 text-gray-300 mb-2" />
+                    No notes yet. Add one below to track interactions.
+                  </div>
+                ) : (
+                  lead.notes.map((note) => (
+                    <div key={note.id} className="relative pl-6 pb-2">
+                      {/* Timeline line */}
+                      <div className="absolute top-0 left-0 h-full w-px bg-gray-200 ml-1"></div>
+                      <div className="absolute top-1 left-0 h-2.5 w-2.5 rounded-full bg-blue-400 border-2 border-white ml-[1px]"></div>
+
+                      <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-xs font-semibold text-gray-700">{note.author}</span>
+                          <span className="text-xs text-gray-400">{format(new Date(note.timestamp), 'MMM d, h:mm a')}</span>
+                        </div>
+                        <p className="text-sm text-gray-600">{note.text}</p>
+                      </div>
                     </div>
-                 </div>
+                  ))
+                )}
+
+                {/* Lead Created Event */}
+                <div className="relative pl-6">
+                  <div className="absolute top-1 left-0 h-2.5 w-2.5 rounded-full bg-gray-300 border-2 border-white ml-[1px]"></div>
+                  <div className="text-sm text-gray-500">
+                    Lead created on <span className="font-medium text-gray-700">{format(new Date(lead.dateAdded), 'MMMM d, yyyy')}</span> from <span className="font-medium">{lead.source}</span>
+                  </div>
+                </div>
               </div>
 
               {/* Add Note Input */}

@@ -19,7 +19,7 @@ async function testAPI() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 email: 'admin@lumina.com',
-                password: 'password'
+                password: 'LuminaCrm@Admin2026!'
             })
         });
         const loginData = await loginResponse.json();

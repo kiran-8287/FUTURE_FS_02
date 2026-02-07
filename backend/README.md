@@ -285,7 +285,7 @@ Authorization: Bearer <jwt_token>
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@lumina.com","password":"password"}'
+  -d '{"email":"admin@lumina.com","password":"LuminaCrm@Admin2026!"}'
 ```
 
 **Create Lead (Public):**
@@ -331,7 +331,7 @@ Error response format:
 ## 📝 Admin Credentials
 
 **Email:** admin@lumina.com  
-**Password:** password
+**Password:** LuminaCrm@Admin2026!
 
 ## 🔄 Integration with Frontend
 

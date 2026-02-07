@@ -11,7 +11,7 @@ export const Settings: React.FC = () => {
   const { addToast } = useToast();
   const { theme, setTheme } = useTheme();
 
-  const [activeTab, setActiveTab] = useState<'profile' | 'notifications' | 'security' | 'appearance' | 'audit-logs' | 'team'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'notifications' | 'security' | 'appearance' | 'team'>('profile');
   const [isLoading, setIsLoading] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
@@ -26,6 +26,8 @@ export const Settings: React.FC = () => {
     pushStatusUpdates: true,
     pushMentions: true
   });
+
+
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,8 +54,8 @@ export const Settings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-sm text-gray-500">Manage your account settings and preferences.</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Manage your account settings and preferences.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
@@ -62,8 +64,8 @@ export const Settings: React.FC = () => {
           <button
             onClick={() => setActiveTab('profile')}
             className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === 'profile'
-              ? 'bg-blue-50 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-50'
+              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
               }`}
           >
             <User size={18} className="mr-3" />
@@ -72,8 +74,8 @@ export const Settings: React.FC = () => {
           <button
             onClick={() => setActiveTab('notifications')}
             className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === 'notifications'
-              ? 'bg-blue-50 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-50'
+              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
               }`}
           >
             <Bell size={18} className="mr-3" />
@@ -82,8 +84,8 @@ export const Settings: React.FC = () => {
           <button
             onClick={() => setActiveTab('appearance')}
             className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === 'appearance'
-              ? 'bg-blue-50 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-50'
+              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
               }`}
           >
             <Palette size={18} className="mr-3" />
@@ -92,28 +94,18 @@ export const Settings: React.FC = () => {
           <button
             onClick={() => setActiveTab('security')}
             className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === 'security'
-              ? 'bg-blue-50 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-50'
+              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
               }`}
           >
             <Shield size={18} className="mr-3" />
             Security
           </button>
           <button
-            onClick={() => setActiveTab('audit-logs')}
-            className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === 'audit-logs'
-              ? 'bg-blue-50 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-50'
-              }`}
-          >
-            <FileText size={18} className="mr-3" />
-            Audit Logs
-          </button>
-          <button
             onClick={() => setActiveTab('team')}
             className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === 'team'
-              ? 'bg-blue-50 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-50'
+              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
               }`}
           >
             <Users size={18} className="mr-3" />
@@ -122,33 +114,33 @@ export const Settings: React.FC = () => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div className="flex-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
 
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <div className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-6">Profile Information</h2>
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Profile Information</h2>
 
               <div className="flex items-center mb-8">
                 <div className="relative group cursor-pointer" onClick={handlePhotoClick}>
                   <img
                     src={user?.avatar}
                     alt="Profile"
-                    className="h-24 w-24 rounded-full border-4 border-gray-100 object-cover transition-opacity group-hover:opacity-75"
+                    className="h-24 w-24 rounded-full border-4 border-gray-100 dark:border-gray-700 object-cover transition-opacity group-hover:opacity-75"
                   />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Camera className="text-gray-800" size={24} />
+                    <Camera className="text-gray-800 dark:text-gray-200" size={24} />
                   </div>
                   <button
                     type="button"
-                    className="absolute bottom-0 right-0 bg-white border border-gray-200 p-1.5 rounded-full shadow-sm text-gray-600 hover:text-blue-600 z-10"
+                    className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-1.5 rounded-full shadow-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 z-10"
                   >
                     <Camera size={16} />
                   </button>
                 </div>
                 <div className="ml-5">
-                  <h3 className="text-lg font-medium text-gray-900">{user?.name}</h3>
-                  <p className="text-sm text-gray-500 capitalize mb-2">{user?.role}</p>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">{user?.name}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 capitalize mb-2">{user?.role}</p>
                   <Button variant="secondary" size="sm" onClick={handlePhotoClick}>
                     Change Photo
                   </Button>
@@ -157,7 +149,7 @@ export const Settings: React.FC = () => {
 
               <form onSubmit={handleProfileSubmit} className="space-y-6 max-w-lg">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Full Name
                   </label>
                   <div className="mt-1">
@@ -166,13 +158,13 @@ export const Settings: React.FC = () => {
                       id="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Email Address
                   </label>
                   <div className="mt-1">
@@ -181,12 +173,12 @@ export const Settings: React.FC = () => {
                       id="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-gray-100">
+                <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
                   <Button type="submit" isLoading={isLoading}>
                     Save Changes
                   </Button>
@@ -198,11 +190,11 @@ export const Settings: React.FC = () => {
           {/* Notifications Tab */}
           {activeTab === 'notifications' && (
             <div className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-6">Notification Preferences</h2>
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Notification Preferences</h2>
 
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900 flex items-center mb-4">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white flex items-center mb-4">
                     <Mail size={16} className="mr-2 text-gray-400" />
                     Email Notifications
                   </h3>
@@ -241,7 +233,7 @@ export const Settings: React.FC = () => {
                 </div>
 
                 <div className="pt-6 border-t border-gray-100">
-                  <h3 className="text-sm font-medium text-gray-900 flex items-center mb-4">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white flex items-center mb-4">
                     <Smartphone size={16} className="mr-2 text-gray-400" />
                     Push Notifications
                   </h3>
@@ -285,10 +277,10 @@ export const Settings: React.FC = () => {
           {/* Appearance Tab */}
           {activeTab === 'appearance' && (
             <div className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-6">Appearance Settings</h2>
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Appearance Settings</h2>
 
               <div className="space-y-4">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Choose how Lumina CRM looks to you. Select a single theme, or sync with your system and automatically switch between day and night themes.
                 </p>
 
@@ -299,8 +291,8 @@ export const Settings: React.FC = () => {
                       addToast('Theme changed to Light', 'success');
                     }}
                     className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${theme === 'light'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                   >
                     <div className="flex items-center h-5">
@@ -312,8 +304,8 @@ export const Settings: React.FC = () => {
                       />
                     </div>
                     <div className="ml-3">
-                      <label className="font-medium text-gray-900 cursor-pointer">Light</label>
-                      <p className="text-sm text-gray-500">Clean and bright interface</p>
+                      <label className="font-medium text-gray-900 dark:text-white cursor-pointer">Light</label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Clean and bright interface</p>
                     </div>
                   </div>
 
@@ -323,8 +315,8 @@ export const Settings: React.FC = () => {
                       addToast('Theme changed to Dark', 'success');
                     }}
                     className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${theme === 'dark'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                   >
                     <div className="flex items-center h-5">
@@ -336,8 +328,8 @@ export const Settings: React.FC = () => {
                       />
                     </div>
                     <div className="ml-3">
-                      <label className="font-medium text-gray-900 cursor-pointer">Dark</label>
-                      <p className="text-sm text-gray-500">Easy on the eyes in low light</p>
+                      <label className="font-medium text-gray-900 dark:text-white cursor-pointer">Dark</label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Easy on the eyes in low light</p>
                     </div>
                   </div>
 
@@ -347,8 +339,8 @@ export const Settings: React.FC = () => {
                       addToast('Theme set to System', 'success');
                     }}
                     className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${theme === 'system'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                   >
                     <div className="flex items-center h-5">
@@ -360,8 +352,8 @@ export const Settings: React.FC = () => {
                       />
                     </div>
                     <div className="ml-3">
-                      <label className="font-medium text-gray-900 cursor-pointer">System</label>
-                      <p className="text-sm text-gray-500">Automatically switch based on your device settings</p>
+                      <label className="font-medium text-gray-900 dark:text-white cursor-pointer">System</label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Automatically switch based on your device settings</p>
                     </div>
                   </div>
                 </div>
@@ -372,7 +364,7 @@ export const Settings: React.FC = () => {
           {/* Security Tab (Placeholder) */}
           {activeTab === 'security' && (
             <div className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-6">Security Settings</h2>
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Security Settings</h2>
 
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
                 <div className="flex">
@@ -401,126 +393,7 @@ export const Settings: React.FC = () => {
             </div>
           )}
 
-          {/* Audit Logs Tab */}
-          {activeTab === 'audit-logs' && (
-            <div className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-6">Audit Logs</h2>
-              <p className="text-sm text-gray-600 mb-6">
-                Track all important actions and changes in your CRM system.
-              </p>
 
-              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Timestamp
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        User
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Action
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Details
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {[
-                      {
-                        timestamp: new Date(Date.now() - 5 * 60000).toLocaleString(),
-                        user: user?.name || 'Admin',
-                        action: 'Lead Created',
-                        details: 'Created new lead: Acme Corporation',
-                        icon: '➕',
-                        color: 'text-green-600'
-                      },
-                      {
-                        timestamp: new Date(Date.now() - 15 * 60000).toLocaleString(),
-                        user: user?.name || 'Admin',
-                        action: 'Status Updated',
-                        details: 'Changed lead status from "New" to "Contacted"',
-                        icon: '🔄',
-                        color: 'text-blue-600'
-                      },
-                      {
-                        timestamp: new Date(Date.now() - 30 * 60000).toLocaleString(),
-                        user: user?.name || 'Admin',
-                        action: 'Lead Deleted',
-                        details: 'Deleted lead: Old Client Inc.',
-                        icon: '🗑️',
-                        color: 'text-red-600'
-                      },
-                      {
-                        timestamp: new Date(Date.now() - 60 * 60000).toLocaleString(),
-                        user: user?.name || 'Admin',
-                        action: 'Bulk Import',
-                        details: 'Imported 25 leads from CSV file',
-                        icon: '📥',
-                        color: 'text-purple-600'
-                      },
-                      {
-                        timestamp: new Date(Date.now() - 2 * 60 * 60000).toLocaleString(),
-                        user: user?.name || 'Admin',
-                        action: 'Settings Changed',
-                        details: 'Updated theme to Dark mode',
-                        icon: '⚙️',
-                        color: 'text-gray-600'
-                      },
-                      {
-                        timestamp: new Date(Date.now() - 3 * 60 * 60000).toLocaleString(),
-                        user: user?.name || 'Admin',
-                        action: 'Lead Converted',
-                        details: 'Converted lead: Tech Startup LLC to customer',
-                        icon: '✅',
-                        color: 'text-green-600'
-                      },
-                      {
-                        timestamp: new Date(Date.now() - 4 * 60 * 60000).toLocaleString(),
-                        user: user?.name || 'Admin',
-                        action: 'Note Added',
-                        details: 'Added note to lead: Follow up next week',
-                        icon: '📝',
-                        color: 'text-yellow-600'
-                      },
-                      {
-                        timestamp: new Date(Date.now() - 24 * 60 * 60000).toLocaleString(),
-                        user: user?.name || 'Admin',
-                        action: 'User Login',
-                        details: 'Successful login from 192.168.1.1',
-                        icon: '🔐',
-                        color: 'text-indigo-600'
-                      }
-                    ].map((log, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {log.timestamp}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {log.user}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center text-sm font-medium ${log.color}`}>
-                            <span className="mr-2">{log.icon}</span>
-                            {log.action}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          {log.details}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="mt-4 text-sm text-gray-500">
-                Showing last 8 activities. Logs are retained for 90 days.
-              </div>
-            </div>
-          )}
 
           {/* Team Tab */}
           {activeTab === 'team' && (

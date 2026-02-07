@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatIndianCurrency } from '../../utils/formatCurrency';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Lead } from '../../types';
@@ -54,7 +55,7 @@ export const KanbanCard: React.FC<KanbanCardProps> = ({ lead, isOverlay }) => {
             <div className="flex items-center justify-between pt-3 border-t border-gray-50 dark:border-gray-700/50">
                 <div className="flex items-center text-xs font-medium text-gray-700 dark:text-gray-300">
                     <IndianRupee size={12} className="mr-1" />
-                    {(lead.value || 0).toLocaleString(undefined, { notation: "compact", compactDisplay: "short" })}
+                    {formatIndianCurrency(lead.value || 0, { compact: true })}
                 </div>
 
                 <div className="h-6 w-6 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900 dark:to-slate-800 flex items-center justify-center text-[10px] font-bold text-blue-600 dark:text-blue-300 border border-white dark:border-gray-700 shadow-sm">

@@ -20,7 +20,7 @@ const login = async (req, res) => {
         }
 
         // Mock Login Fallback (for development)
-        if (process.env.ALLOW_MOCK_LOGIN === 'true' && email === 'admin@lumina.com' && password === 'password') {
+        if (process.env.ALLOW_MOCK_LOGIN === 'true' && email === 'admin@lumina.com' && password === 'LuminaCrm@Admin2026!') {
             console.log('⚠️ Using MOCK LOGIN (Database connection bypassed)');
             const token = jwt.sign(
                 { id: 0, email: 'admin@lumina.com' },

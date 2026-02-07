@@ -18,7 +18,7 @@ export const Layout: React.FC = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-white transition-colors duration-300">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       <CommandPalette />
       <Sidebar />
 

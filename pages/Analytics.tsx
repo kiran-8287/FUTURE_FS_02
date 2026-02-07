@@ -1,13 +1,28 @@
 import React from 'react';
+import { formatIndianCurrency } from '../utils/formatCurrency';
 import { useLeads } from '../context/LeadContext';
 import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, FunnelChart, Funnel, LabelList } from 'recharts';
 import { format, parseISO, isValid } from 'date-fns';
 import { Printer } from 'lucide-react';
 import { Button } from '../components/ui/Button';
+import { useTheme } from '../context/ThemeContext';
 
 export const Analytics: React.FC = () => {
   const { leads, getLeadStats } = useLeads();
+  const { theme } = useTheme();
+
+  // Helper to check if dark mode is active (handling system preference)
+  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
   const stats = getLeadStats();
+
+  // Chart Colors
+  const chartColors = {
+    text: isDark ? '#e5e7eb' : '#374151', // gray-200 : gray-700
+    grid: isDark ? '#374151' : '#e5e7eb', // gray-700 : gray-200
+    tooltipBg: isDark ? '#1f2937' : '#ffffff', // gray-800 : white
+    tooltipBorder: isDark ? '#374151' : '#e5e7eb', // gray-700 : gray-200
+  };
 
   // Data preparation for Status Pie Chart
   const statusData = [
@@ -82,7 +97,7 @@ export const Analytics: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Analytics</h1>
         <Button onClick={() => window.print()} variant="secondary">
           <Printer size={16} className="mr-2" />
           Export Report
@@ -92,8 +107,8 @@ export const Analytics: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Status Distribution */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Lead Status Distribution</h2>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Lead Status Distribution</h2>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -107,29 +122,35 @@ export const Analytics: React.FC = () => {
                   dataKey="value"
                 >
                   {statusData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke={isDark ? '#1f2937' : '#fff'} />
                   ))}
                 </Pie>
-                <Tooltip />
-                <Legend verticalAlign="bottom" height={36} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: chartColors.tooltipBg, borderColor: chartColors.tooltipBorder, color: chartColors.text }}
+                  itemStyle={{ color: chartColors.text }}
+                />
+                <Legend verticalAlign="bottom" height={36} wrapperStyle={{ color: chartColors.text }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Conversion Funnel */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Conversion Funnel</h2>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Conversion Funnel</h2>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <FunnelChart>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{ backgroundColor: chartColors.tooltipBg, borderColor: chartColors.tooltipBorder, color: chartColors.text }}
+                  itemStyle={{ color: chartColors.text }}
+                />
                 <Funnel
                   dataKey="value"
                   data={funnelData}
                   isAnimationActive
                 >
-                  <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
+                  <LabelList position="right" fill={chartColors.text} stroke="none" dataKey="name" />
                 </Funnel>
               </FunnelChart>
             </ResponsiveContainer>
@@ -137,20 +158,23 @@ export const Analytics: React.FC = () => {
         </div>
 
         {/* Lead Growth Trend */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 md:col-span-2">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">New Leads (Last 30 Days)</h2>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 md:col-span-2">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">New Leads (Last 30 Days)</h2>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={leadsOverTime} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartColors.grid} />
                 <XAxis
                   dataKey="date"
                   tickFormatter={(str) => format(parseISO(str), 'MMM dd')}
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 12, fill: chartColors.text }}
+                  stroke={chartColors.grid}
                 />
-                <YAxis allowDecimals={false} />
+                <YAxis allowDecimals={false} tick={{ fill: chartColors.text }} stroke={chartColors.grid} />
                 <Tooltip
                   labelFormatter={(str) => format(parseISO(str), 'MMM dd, yyyy')}
+                  contentStyle={{ backgroundColor: chartColors.tooltipBg, borderColor: chartColors.tooltipBorder, color: chartColors.text }}
+                  itemStyle={{ color: chartColors.text }}
                 />
                 <Line
                   type="monotone"
@@ -166,8 +190,8 @@ export const Analytics: React.FC = () => {
         </div>
 
         {/* Revenue/Value by Source */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 md:col-span-2">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Potential Revenue by Source</h2>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 md:col-span-2">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Potential Revenue by Source</h2>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -175,10 +199,14 @@ export const Analytics: React.FC = () => {
                 layout="vertical"
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke={chartColors.grid} />
                 <XAxis type="number" hide />
-                <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
-                <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Value']} />
+                <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12, fill: chartColors.text }} stroke={chartColors.grid} />
+                <Tooltip
+                  formatter={(value: number) => [formatIndianCurrency(value), 'Value']}
+                  contentStyle={{ backgroundColor: chartColors.tooltipBg, borderColor: chartColors.tooltipBorder, color: chartColors.text }}
+                  itemStyle={{ color: chartColors.text }}
+                />
                 <Bar dataKey="value" fill="#3B82F6" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -188,25 +216,25 @@ export const Analytics: React.FC = () => {
       </div>
 
       {/* Summary Metrics */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Performance Metrics</h2>
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Performance Metrics</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-4 bg-white border border-gray-100 rounded-lg">
-            <p className="text-sm text-gray-500">Conversion Rate</p>
-            <p className="text-2xl font-bold text-gray-900">
+          <div className="p-4 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-lg">
+            <p className="text-sm text-gray-500 dark:text-gray-300">Conversion Rate</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
               {stats.total > 0 ? ((stats.converted / stats.total) * 100).toFixed(1) : 0}%
             </p>
           </div>
-          <div className="p-4 bg-white border border-gray-100 rounded-lg">
-            <p className="text-sm text-gray-500">Total Pipeline Value</p>
-            <p className="text-2xl font-bold text-gray-900">
-              ₹{stats.value.toLocaleString()}
+          <div className="p-4 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-lg">
+            <p className="text-sm text-gray-500 dark:text-gray-300">Total Pipeline Value</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {formatIndianCurrency(stats.value)}
             </p>
           </div>
-          <div className="p-4 bg-white border border-gray-100 rounded-lg">
-            <p className="text-sm text-gray-500">Avg. Deal Size</p>
-            <p className="text-2xl font-bold text-gray-900">
-              ₹{stats.total > 0 ? (stats.value / stats.total).toLocaleString(undefined, { maximumFractionDigits: 0 }) : 0}
+          <div className="p-4 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-lg">
+            <p className="text-sm text-gray-500 dark:text-gray-300">Avg. Deal Size</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {formatIndianCurrency(stats.total > 0 ? stats.value / stats.total : 0)}
             </p>
           </div>
         </div>

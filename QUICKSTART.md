@@ -45,7 +45,7 @@ CREATE TABLE admin_users (
 
 -- Create admin user
 INSERT INTO admin_users (email, password) 
-VALUES ('admin@lumina.com', 'password');
+VALUES ('admin@lumina.com', 'LuminaCrm@Admin2026!');
 ```
 
 4. Go to **Settings** → **Database** and copy your connection details
@@ -80,7 +80,7 @@ npm run dev
 1. Open http://localhost:3000
 2. Login with:
    - Email: `admin@lumina.com`
-   - Password: `password`
+   - Password: `LuminaCrm@Admin2026!`
 
 ### 5️⃣ Import Sample Data (Optional)
 

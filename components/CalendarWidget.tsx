@@ -55,33 +55,13 @@ export const CalendarWidget: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col md:flex-row h-full">
-      <style>{`
-              .react-calendar { 
-                width: 100%; bg: transparent; border: none; font-family: inherit; 
-              }
-              .react-calendar__navigation { margin-bottom: 1rem; }
-              .react-calendar__navigation button { 
-                min-width: 44px; background: none; font-size: 16px; font-weight: 600; color: #111827;
-              }
-              .react-calendar__navigation button:enabled:hover { background-color: #F3F4F6; border-radius: 8px; }
-              .react-calendar__month-view__weekdays { 
-                text-transform: uppercase; font-weight: 600; font-size: 0.75em; color: #9CA3AF; text-decoration: none;
-              }
-              .react-calendar__month-view__weekdays__weekday { padding: 0.5em; text-decoration: none; }
-              .react-calendar__month-view__weekdays__weekday abbr { text-decoration: none; }
-              .react-calendar__tile { 
-                padding: 10px 6px; background: none; text-align: center; font-size: 0.875rem; border-radius: 8px; color: #374151;
-              }
-              .react-calendar__tile:enabled:hover { background-color: #EFF6FF; color: #2563EB; }
-              .react-calendar__tile--now { background: #EFF6FF !important; color: #2563EB !important; font-weight: bold; }
-              .react-calendar__tile--active { background: #2563EB !important; color: white !important; }
-            `}</style>
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col md:flex-row h-full">
+
 
       {/* Calendar Section */}
-      <div className="p-6 md:w-3/5 border-b md:border-b-0 md:border-r border-gray-100 flex flex-col justify-center">
+      <div className="p-6 md:w-3/5 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-700 flex flex-col justify-center">
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="font-semibold text-gray-900">Calendar</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">Calendar</h3>
           <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
             {format(date, 'MMMM yyyy')}
           </span>
@@ -97,7 +77,7 @@ export const CalendarWidget: React.FC = () => {
       </div>
 
       {/* Tasks Section */}
-      <div className="p-6 md:w-2/5 bg-white flex flex-col">
+      <div className="p-6 md:w-2/5 bg-white dark:bg-gray-800 flex flex-col">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
             Schedule for {format(date, 'MMM d')}
@@ -111,19 +91,19 @@ export const CalendarWidget: React.FC = () => {
 
         <div className="space-y-3 flex-1 overflow-y-auto pr-1">
           {tasksForSelectedDate.length === 0 && !isAddingTask ? (
-            <div className="text-center py-8 text-gray-400 text-sm">
+            <div className="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
               No tasks scheduled for this day
             </div>
           ) : (
             tasksForSelectedDate.map(task => (
-              <div key={task.id} className="flex items-start group p-2 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all">
+              <div key={task.id} className="flex items-start group p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-transparent hover:border-gray-100 dark:hover:border-gray-700 transition-all">
                 <button
                   onClick={() => toggleTaskCompletion(task.id)}
                   className={clsx(
                     "mt-0.5 mr-3 flex-shrink-0 w-5 h-5 rounded border flex items-center justify-center transition-colors",
                     task.completed
                       ? "bg-green-500 border-green-500 text-white"
-                      : "border-gray-300 hover:border-blue-500 bg-white"
+                      : "border-gray-300 dark:border-gray-600 hover:border-blue-500 bg-white dark:bg-gray-800"
                   )}
                 >
                   {task.completed && <CheckCircle2 size={12} />}
@@ -131,7 +111,7 @@ export const CalendarWidget: React.FC = () => {
                 <div className="flex-1">
                   <p className={clsx(
                     "text-sm font-medium transition-all",
-                    task.completed ? "text-gray-400 line-through" : "text-gray-900"
+                    task.completed ? "text-gray-400 dark:text-gray-500 line-through" : "text-gray-900 dark:text-white"
                   )}>
                     {task.title}
                   </p>
@@ -152,13 +132,13 @@ export const CalendarWidget: React.FC = () => {
 
           {/* Add Task Form */}
           {isAddingTask && (
-            <div className="p-3 border border-blue-200 rounded-lg bg-blue-50/50 space-y-2">
+            <div className="p-3 border border-blue-200 dark:border-blue-900 rounded-lg bg-blue-50/50 dark:bg-blue-900/20 space-y-2">
               <input
                 type="text"
                 placeholder="Task title..."
                 value={newTaskTitle}
                 onChange={(e) => setNewTaskTitle(e.target.value)}
-                className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') addTask();
@@ -170,7 +150,7 @@ export const CalendarWidget: React.FC = () => {
                 placeholder="Time (e.g., 10:00 AM)"
                 value={newTaskTime}
                 onChange={(e) => setNewTaskTime(e.target.value)}
-                className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') addTask();
                   if (e.key === 'Escape') setIsAddingTask(false);
@@ -189,7 +169,7 @@ export const CalendarWidget: React.FC = () => {
                     setNewTaskTitle('');
                     setNewTaskTime('');
                   }}
-                  className="flex-1 py-1 bg-gray-200 text-gray-700 text-xs rounded hover:bg-gray-300 transition-colors"
+                  className="flex-1 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                 >
                   Cancel
                 </button>
@@ -201,7 +181,7 @@ export const CalendarWidget: React.FC = () => {
         {!isAddingTask && (
           <button
             onClick={() => setIsAddingTask(true)}
-            className="w-full mt-auto py-2 border border-dashed border-gray-300 rounded-lg text-xs text-gray-500 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all flex items-center justify-center gap-1"
+            className="w-full mt-auto py-2 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-xs text-gray-500 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-800 transition-all flex items-center justify-center gap-1"
           >
             <Plus size={14} />
             Add Task

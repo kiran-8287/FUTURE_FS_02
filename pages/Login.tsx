@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('admin@lumina.com');
-  const [password, setPassword] = useState('password');
+  const [password, setPassword] = useState('LuminaCrm@Admin2026!');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const { login } = useAuth();
@@ -149,7 +149,7 @@ export const Login: React.FC = () => {
 
             <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-700">
               <p>Email: admin@lumina.com</p>
-              <p>Password: password</p>
+              <p>Password: LuminaCrm@Admin2026!</p>
             </div>
           </div>
         </div>
