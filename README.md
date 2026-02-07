@@ -8,12 +8,14 @@ A modern, full-stack Customer Relationship Management (CRM) system built with Re
 ## ✨ Features
 
 ### 📊 Dashboard & Analytics
+![Dashboard](screenshots/Dashboard.png)
 - **Real-time Statistics** - Total leads, conversion rates, and pipeline value
 - **Visual Charts** - Lead distribution by status and source
 - **Performance Metrics** - Track conversion rates and sales trends
 - **Quick Actions** - Fast access to common tasks
 
 ### 👥 Lead Management
+![Leads](screenshots/Leads.png)
 - **Complete CRUD Operations** - Create, read, update, and delete leads
 - **Status Workflow** - Track leads through: New → Contacted → Converted
 - **Advanced Search & Filtering** - Find leads by name, email, status, or source
@@ -39,6 +41,7 @@ A modern, full-stack Customer Relationship Management (CRM) system built with Re
 - **Loading States** - Smooth UX with loading indicators
 
 ### 📈 Analytics & Reporting
+![Analytics](screenshots/Analytics.png)
 - **Lead Analytics** - Comprehensive statistics and insights
 - **Status Distribution** - Visual breakdown of pipeline stages
 - **Source Tracking** - Monitor lead generation channels
@@ -84,6 +87,8 @@ cd lumina-crm
 2. Create a new project
 3. Go to **Settings** → **Database** and note your connection details
 4. Run the following SQL in the Supabase SQL Editor:
+
+![Schema](screenshots/Schema.png)
 
 ```sql
 -- Create leads table
